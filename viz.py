@@ -100,5 +100,17 @@ if __name__ == "__main__":
     points = np.concatenate((points_x, points_y), axis=1, dtype=np.float32)
     del points_x, points_y
 
-    app = Viz(points)
-    app.run()
+    qt = quadTree(boundaries=(TANK_W, TANK_H), start_pos=(50, 150))
+    print(qt)
+
+    for i in range(points.shape[0]):
+        qt.put((points[i, 0], points[i, 1]))
+
+    print(qt)
+    print("Node-0:", qt._node_0)
+    print("Node-1:", qt._node_1)
+    print("Node-2:", qt._node_2)
+    print("Node-3:", qt._node_3)
+
+    # app = Viz(points)
+    # app.run()
