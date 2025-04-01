@@ -83,48 +83,48 @@ class quadTree:
         self._node_2 = quadTree(half_bound, (self.root.pos[0], sum_at_y), self.max_deep-1)
         self._node_3 = quadTree(half_bound, (sum_at_x, sum_at_y), self.max_deep-1)
 
-    def put(self, pos: tuple[float, float]) -> None:
+    def put(self, pos: tuple[float, float], size: float) -> None:
         if not pos in self.root:
             raise Exception(f"This position ({pos}), it is out of boundaries.")
 
-        self.__put(pos, level=0)
+        self.__put(pos, size, level=0)
         self.len += 1
         return None
 
-    def __put(self, pos: tuple[float, float], level: int,) -> None:
+    def __put(self, pos: tuple[float, float], size: float, level: int,) -> None:
         half_bound = (self.boundaries[0]/2, self.boundaries[1]/2)
 
-        # if next boundaries are less than 1 or it is at the maximun resolution, then stop and insert
-        if (min(half_bound)/2 <= 1) or (level == self.max_deep):
-            self.root = node(pos, half_bound)
-            self.len += 1
+        # if next boundaries are less than ``size``
+        # or it is at the maximun resolution, then stop and insert
+        if (min(half_bound)/2 < size) or (level == self.max_deep):
+            self.root.has_item = True
             return None
 
         if self._node_0 is None:
             self.create_nodes()
 
         if pos in self._node_0.root:
-            self._node_0.__put(pos, level+1)
+            self._node_0.__put(pos, size, level+1)
             self._node_0.len += 1
             return None
 
         elif pos in self._node_1.root:
-            self._node_1.__put(pos, level+1)
+            self._node_1.__put(pos, size, level+1)
             self._node_1.len += 1
             return None
 
         elif pos in self._node_2.root:
-            self._node_2.__put(pos, level+1)
+            self._node_2.__put(pos, size, level+1)
             self._node_2.len += 1
             return None
 
         elif pos in self._node_3.root:
-            self._node_3.__put(pos, level+1)
+            self._node_3.__put(pos, size, level+1)
             self._node_3.len += 1
             return None
 
-        print("Que merda aconteceu aqui??\nPos:", pos, "Level:", level)
+        print("Que merda aconteceu aqui??\nPos:", pos, "Size:", size, "Level:", level)
         return None
 
-    def search(self):
+    def __get__(self, pos: tuple[float, float]) -> None:
         pass
