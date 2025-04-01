@@ -6,20 +6,20 @@ import numpy as np
 
 
 class node:
-    def __init__(self, pos: tuple[float, float], size: tuple[float, float]):
-        self.has_item: bool = False
+    def __init__(self, pos: tuple[float, float], size: tuple[float, float], data = None):
         self.pos = pos # 0:horizontal, 1:vertical relative positions
         # self.center: tuple[float, float] = (pos[0] + size[0]/2, pos[1] + size[1]/2)
         self.size = size
+        self.userData = data
 
-    def __contains__(self, pos: tuple[float, float]) -> bool:
-        if (pos[0] < self.pos[0]) or (pos[0] > self.pos[0] + self.size[0]):
-            return False
+    def __contains__(self, other) -> bool:
+        if type(other) != node:
+            assert type(other) == tuple
+            other = node(other, (0.0, 0.0))
 
-        if (pos[1] < self.pos[1]) or (pos[1] > self.pos[1] + self.size[1]):
-            return False
-
-        return True
+        res_x = (self.pos[0] <= other.pos[0]+other.size[0]) and (other.pos[0] <= self.pos[0] + self.size[0])
+        res_y = (self.pos[1] <= other.pos[1]+other.size[1]) and (other.pos[1] <= self.pos[1] + self.size[1])
+        return res_x and res_y
 
 
 class quadTree:
