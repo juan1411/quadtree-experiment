@@ -16,6 +16,9 @@ TANK_H = 700
 T_COLOR = ray.ORANGE
 DEV = False
 
+R_POS = (500, 300)
+R_SIZE = (200, 200)
+
 class Viz:
     def __init__(self, points: np.ndarray):
         ray.init_window(WIN_W, WIN_H, "Testing QuadTree")
@@ -86,16 +89,25 @@ class Viz:
         factor = SPEED * self.delay * 10
         ray.draw_text(f"Avg Velocity: [{vel_mean[0]*factor:.1f}, {vel_mean[1]*factor:.1f}]", 461, 68, 24, T_COLOR)
 
+        at_region = self.qt[(R_POS, R_SIZE)]
+        inds = [node.userData for node in at_region if node.userData is not None]
+        ray.draw_text(f"Num. of Counts: {len(at_region)}", 811, 12, 24, T_COLOR)
+        ray.draw_text(f"Num. at Region: {len(inds)}", 811, 40, 24, T_COLOR)
+
+        vel_mean = self.directions[inds, ].mean(axis=0)
+        factor = SPEED * self.delay * 10
+        ray.draw_text(f"Avg Velocity: [{vel_mean[0]*factor:.1f}, {vel_mean[1]*factor:.1f}]", 811, 68, 24, T_COLOR)
+
+
         ray.draw_text(f"Dev mode: {DEV}", 1389, 68, 24, T_COLOR)
 
 
         tank = ray.Rectangle(0, 0, TANK_W, TANK_H)
         ray.draw_rectangle_pro(tank, (-50, -150), 0, ray.SKYBLUE)
         ray.draw_rectangle_lines(50, 150, TANK_W, TANK_H, ray.WHITE)
-        for i in range(self.points.shape[0]):
-            x = self.points[i, 0]
-            y = self.points[i, 1]
-            ray.draw_circle(x, y, SIZE, ray.WHITE)
+
+        # query region
+        ray.draw_rectangle(R_POS[0], R_POS[1], R_SIZE[0], R_SIZE[1], (20, 150, 10, 100))
 
         for node in self.qt:
             pos = node.root.pos
@@ -109,6 +121,11 @@ class Viz:
                     int(round(pos[0],0)), int(round(pos[1],0)), int(round(size[0],0)), int(round(size[1],0)),
                     (250, 0, 0, 100),
                 )
+
+        for i in range(self.points.shape[0]):
+            x = self.points[i, 0]
+            y = self.points[i, 1]
+            ray.draw_circle(x, y, SIZE, ray.WHITE)
 
         ray.end_drawing()
         return None
