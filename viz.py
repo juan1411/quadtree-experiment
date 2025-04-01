@@ -40,7 +40,11 @@ class Viz:
         self.qt = None
         self.qt = quadTree(boundaries=(TANK_W, TANK_H), start_pos=(50, 150))
         for i in range(points.shape[0]):
-            self.qt.put((points[i, 0], points[i, 1]), SIZE)
+            self.qt.insert(
+                (points[i, 0]-SIZE, points[i, 1]-SIZE),
+                (2*SIZE, 2*SIZE),
+                user_data=(i)
+            )
 
     def update(self):
         self.delay = ray.get_frame_time()
@@ -127,7 +131,7 @@ if __name__ == "__main__":
     # print(qt)
 
     # for i in range(points.shape[0]):
-    #     qt.put((points[i, 0]-SIZE, points[i, 1]-SIZE), SIZE)
+    #     qt.insert((points[i, 0]-SIZE, points[i, 1]-SIZE), SIZE)
 
     # # print(qt)
     # for node in qt:
