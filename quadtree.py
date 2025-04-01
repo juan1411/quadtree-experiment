@@ -7,8 +7,8 @@ import numpy as np
 
 class node:
     def __init__(self, pos: tuple[float, float], size: tuple[float, float]):
+        self.has_item: bool = False
         self.pos = pos # 0:horizontal, 1:vertical relative positions
-
         # self.center: tuple[float, float] = (pos[0] + size[0]/2, pos[1] + size[1]/2)
         self.size = size
 
@@ -42,12 +42,33 @@ class quadTree:
         self._node_2: quadTree = None
         self._node_3: quadTree = None
 
+        self._stack: list[quadTree] = [self]
+
     def __repr__(self):
         return f"<quadTree len:{self.len}, max-deep:{self.max_deep}>"
 
     def __len__(self):
         assert self._node_0.len + self._node_1.len + self._node_2.len + self._node_3.len == self.len
         return self.len
+
+    def __iter__(self):
+        self._stack = [self]  # Reset stack for new iteration
+        return self
+
+    def __next__(self):
+        if not self._stack:
+            raise StopIteration
+
+        sub_tree = self._stack.pop()
+
+        # Push children to the stack if they exist
+        nodes = (sub_tree._node_0, sub_tree._node_1, sub_tree._node_2, sub_tree._node_3)
+        for child in nodes:
+            if child is not None:
+                self._stack.append(child)
+
+        # Yield the current node
+        return sub_tree
 
     def create_nodes(self):
         # node0 | node1
