@@ -1,7 +1,7 @@
 import pyray as ray
 import numpy as np
 
-from quadtree import quadTree, construct_quadtree
+from quadtree import quadTree
 
 WIN_W = 1600
 WIN_H = 900
@@ -14,7 +14,7 @@ TANK_W = 1500
 TANK_H = 700
 
 T_COLOR = ray.ORANGE
-DEV = True
+DEV = False
 
 class Viz:
     def __init__(self, points: np.ndarray):
@@ -24,15 +24,23 @@ class Viz:
         self.timer = 0
 
         self.points = points
-        # self.space = construct_quadtree(points)
+        self.qt: quadTree = None
         self.directions: np.ndarray = None
 
+        # Resolving/starting directions
         if not DEV:
             aa = np.random.randint(-10, 10, size=self.points.shape)/10
         else:
             aa = np.zeros(self.points.shape)
 
         self.directions = aa.copy()
+
+    def constructing_quadTree(self):
+        # Constructing quadTree
+        self.qt = None
+        self.qt = quadTree(boundaries=(TANK_W, TANK_H), start_pos=(50, 150))
+        for i in range(points.shape[0]):
+            self.qt.put((points[i, 0], points[i, 1]), SIZE)
 
     def update(self):
         self.delay = ray.get_frame_time()
@@ -54,6 +62,8 @@ class Viz:
 
             self.points[i, 0] += self.directions[i, 0] * self.delay * SPEED
             self.points[i, 1] += self.directions[i, 1] * self.delay * SPEED
+
+        self.constructing_quadTree()
 
     def draw(self):
         ray.begin_drawing()
@@ -83,6 +93,19 @@ class Viz:
             y = self.points[i, 1]
             ray.draw_circle(x, y, SIZE, ray.WHITE)
 
+        for node in self.qt:
+            pos = node.root.pos
+            size = node.root.size
+            ray.draw_rectangle_lines(
+                int(pos[0]), int(pos[1]), int(size[0]), int(size[1]),
+                (255, 255, 255, 100),
+            )
+            if node.root.has_item:
+                ray.draw_rectangle(
+                    int(pos[0]), int(pos[1]), int(size[0]), int(size[1]),
+                    (250, 0, 0, 100),
+                )
+
         ray.end_drawing()
         return None
 
@@ -100,17 +123,15 @@ if __name__ == "__main__":
     points = np.concatenate((points_x, points_y), axis=1, dtype=np.float32)
     del points_x, points_y
 
-    qt = quadTree(boundaries=(TANK_W, TANK_H), start_pos=(50, 150))
-    print(qt)
+    # qt = quadTree(boundaries=(TANK_W, TANK_H), start_pos=(50, 150))
+    # print(qt)
 
-    for i in range(points.shape[0]):
-        qt.put((points[i, 0], points[i, 1]))
+    # for i in range(points.shape[0]):
+    #     qt.put((points[i, 0]-SIZE, points[i, 1]-SIZE), SIZE)
 
-    print(qt)
-    print("Node-0:", qt._node_0)
-    print("Node-1:", qt._node_1)
-    print("Node-2:", qt._node_2)
-    print("Node-3:", qt._node_3)
+    # # print(qt)
+    # for node in qt:
+    #     print(node)
 
-    # app = Viz(points)
-    # app.run()
+    app = Viz(points)
+    app.run()
