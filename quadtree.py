@@ -128,6 +128,17 @@ class quadTree:
 
         print("Que merda aconteceu aqui??\nPos:", pos, "Size:", size, "Level:", level)
         return None
+    
+    def query(self, pos: tuple[float, float], size: tuple[float, float]) -> list[node]:
+        return self.__getitem__((pos, size))
 
-    def __get__(self, pos: tuple[float, float]) -> None:
-        pass
+    def __getitem__(self, key: tuple[tuple[float, float], tuple[float, float]]) -> list[node]:
+        pos = key[0]
+        size = key[1]
+        __stack__ = []
+        area = node(pos, size)
+        for child in self:
+            if (child.root in area): # and (child.root.userData is not None):
+                __stack__.append(child.root)
+        
+        return __stack__
