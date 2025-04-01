@@ -7,8 +7,8 @@ WIN_W = 1600
 WIN_H = 900
 
 N_POINTS = 100
-SIZE = 10
-SPEED = 500 # pixel/s
+SIZE = 2
+SPEED = 100 # pixel/s
 
 TANK_W = 1500
 TANK_H = 700
@@ -54,7 +54,7 @@ class Viz:
             x = self.points[i, 0]
             y = self.points[i, 1]
 
-            incr = self.directions[i, [0, 1]]
+            incr = self.directions[i, [0, 1]] * self.delay * SPEED
 
             if (x+incr[0]-SIZE < 50) or (x+incr[0]+SIZE > 50+TANK_W):
                 self.directions[i, 0] *= (-1)
@@ -101,12 +101,12 @@ class Viz:
             pos = node.root.pos
             size = node.root.size
             ray.draw_rectangle_lines(
-                int(pos[0]), int(pos[1]), int(size[0]), int(size[1]),
+                int(round(pos[0],0)), int(round(pos[1],0)), int(round(size[0],0)), int(round(size[1],0)),
                 (255, 255, 255, 100),
             )
-            if node.root.has_item:
+            if node.root.userData:
                 ray.draw_rectangle(
-                    int(pos[0]), int(pos[1]), int(size[0]), int(size[1]),
+                    int(round(pos[0],0)), int(round(pos[1],0)), int(round(size[0],0)), int(round(size[1],0)),
                     (250, 0, 0, 100),
                 )
 
@@ -122,8 +122,8 @@ class Viz:
 
 
 if __name__ == "__main__":
-    points_x = np.random.randint(51+SIZE, 49-SIZE+TANK_W, size=N_POINTS).reshape((-1, 1))
-    points_y = np.random.randint(151+SIZE, 149-SIZE+TANK_H, size=N_POINTS).reshape((-1, 1))
+    points_x = np.random.randint(low=55+SIZE, high=45-SIZE+TANK_W, size=N_POINTS).reshape((-1, 1))
+    points_y = np.random.randint(low=155+SIZE, high=145-SIZE+TANK_H, size=N_POINTS).reshape((-1, 1))
     points = np.concatenate((points_x, points_y), axis=1, dtype=np.float32)
     del points_x, points_y
 
