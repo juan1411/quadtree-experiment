@@ -6,8 +6,8 @@ from quadtree import quadTree
 WIN_W = 1600
 WIN_H = 900
 
-N_POINTS = 100
-SIZE = 2
+N_POINTS = 1000
+SIZE = 1
 SPEED = 100 # pixel/s
 
 TANK_W = 1500
@@ -109,18 +109,18 @@ class Viz:
         # query region
         ray.draw_rectangle(R_POS[0], R_POS[1], R_SIZE[0], R_SIZE[1], (20, 150, 10, 100))
 
-        for node in self.qt:
-            pos = node.root.pos
-            size = node.root.size
-            ray.draw_rectangle_lines(
-                int(round(pos[0],0)), int(round(pos[1],0)), int(round(size[0],0)), int(round(size[1],0)),
-                (255, 255, 255, 100),
-            )
-            if node.root.userData:
-                ray.draw_rectangle(
-                    int(round(pos[0],0)), int(round(pos[1],0)), int(round(size[0],0)), int(round(size[1],0)),
-                    (250, 0, 0, 100),
-                )
+        # for node in self.qt:
+        #     pos = node.root.pos
+        #     size = node.root.size
+            # ray.draw_rectangle_lines(
+            #     int(round(pos[0],0)), int(round(pos[1],0)), int(round(size[0],0)), int(round(size[1],0)),
+            #     (255, 255, 255, 100),
+            # )
+            # if node.root.userData:
+            #     ray.draw_rectangle(
+            #         int(round(pos[0],0)), int(round(pos[1],0)), int(round(size[0],0)), int(round(size[1],0)),
+            #         (250, 0, 0, 100),
+            #     )
 
         for i in range(self.points.shape[0]):
             x = self.points[i, 0]
@@ -143,16 +143,6 @@ if __name__ == "__main__":
     points_y = np.random.randint(low=155+SIZE, high=145-SIZE+TANK_H, size=N_POINTS).reshape((-1, 1))
     points = np.concatenate((points_x, points_y), axis=1, dtype=np.float32)
     del points_x, points_y
-
-    # qt = quadTree(boundaries=(TANK_W, TANK_H), start_pos=(50, 150))
-    # print(qt)
-
-    # for i in range(points.shape[0]):
-    #     qt.insert((points[i, 0]-SIZE, points[i, 1]-SIZE), SIZE)
-
-    # # print(qt)
-    # for node in qt:
-    #     print(node)
 
     app = Viz(points)
     app.run()

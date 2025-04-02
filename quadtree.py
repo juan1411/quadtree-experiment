@@ -128,7 +128,7 @@ class quadTree:
 
         print("Que merda aconteceu aqui??\nPos:", pos, "Size:", size, "Level:", level)
         return None
-    
+
     def query(self, pos: tuple[float, float], size: tuple[float, float]) -> list[node]:
         return self.__getitem__((pos, size))
 
